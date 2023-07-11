@@ -33,7 +33,7 @@ CREATE TABLE "Session" (
     "id" TEXT NOT NULL,
     "heartRate" TEXT,
     "spo2" TEXT,
-    "temprature" TEXT,
+    "temperature" TEXT,
     "active" BOOLEAN NOT NULL,
     "deviceId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -45,9 +45,13 @@ CREATE TABLE "Session" (
 -- CreateTable
 CREATE TABLE "History" (
     "id" TEXT NOT NULL,
+    "age" TEXT,
+    "sex" TEXT,
+    "mood" TEXT,
+    "sleepDur" TEXT,
     "heartRate" TEXT,
     "spo2" TEXT,
-    "temprature" TEXT,
+    "temperature" TEXT,
     "sessionId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),

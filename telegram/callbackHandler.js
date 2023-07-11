@@ -67,7 +67,7 @@ bot.on("callback_query", async (query) => {
 
         if (!user) {
             text =
-                "Sorry, we not recognize you. Are you new here? please fill up your profil first";
+                "Sorry, we don\'t recognize you. Are you new here? please fill up your profil first.";
         }
         text += "\nQuick Access to bot menu";
         bot.sendMessage(userChatId, text, Keyboard.defaultInlineKeyboard());
@@ -152,7 +152,7 @@ bot.on("callback_query", async (query) => {
             },
         });
 
-        // Jika User Belum memiliki perangkkat
+        // Jika User Belum memiliki perangkat
         if (!user.Device) {
             text =
                 'It seems we don\'t recognize your device. Have you linked your device with this account? If not, you can easily link it by pressing the "REGISTER DEVICE" button';
@@ -183,7 +183,7 @@ bot.on("callback_query", async (query) => {
         });
         setUserActivity(query, `START_SESSION#${session.id}#${userMessageId}`);
         bot.editMessageText(
-            "The measurement session will start immediately, place your finger on the sensor for 2 minutes. The results of measurements taken by your device will appear below.",
+            "The measurement session will start immediately, place your finger on the sensor for a few seconds. The results of measurements taken by your device will appear below.",
             options
         );
 
@@ -235,11 +235,11 @@ bot.on("callback_query", async (query) => {
                 id: true,
                 spo2: true,
                 heartRate: true,
-                temprature: true,
+                temperature: true,
             },
         });
 
-        const text = `🧾 This is a summary of the measurement\n🆔 Session ID: ${data.id}\n\n💓 Average Heart Rate: ${data.heartRate}\n 🫧 Average SpO2: ${data.spo2}\n 🌡️ Average Body Temprature: ${data.temprature}\n\nOur displayed data is based on the average measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
+        const text = `🧾 This is a summary of the measurement\n🆔 Session ID: ${data.id}\n\n💓 Average Heart Rate: ${data.heartRate}\n 🫧 Average SpO2: ${data.spo2}\n 🌡️ Average Body Temperature: ${data.temperature}\n\nOur displayed data is based on the average measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
         let options = {
             chat_id: userChatId,
             message_id: userMessageId,

@@ -57,7 +57,7 @@ MqttServer.listener("/session/record/+", async (payload, _) => {
         userActivity.activity.split("#");
 
     // Perbaharui pesan milik user
-    const text = `🕺🏽This Is Your Measurements🎉\n 📥 Measurements No: ${body.no}\n 💓 Heart Rate: ${body.heartreat}\n 🫧 SpO2: ${body.spo2}\n 🌡️ Body temprature: ${body.temprature}`;
+    const text = `🕺🏽This Is Your Measurements🎉\n 📥 Measurements No: ${body.no}\n 💓 Heart Rate: ${body.heartRate}\n 🫧 SpO2: ${body.spo2}\n 🌡️ Body temperature: ${body.temperature}`;
     bot.editMessageText(text, {
         chat_id: device.user.user_chat_id,
         message_id: userMessageId,
@@ -69,9 +69,9 @@ MqttServer.listener("/session/record/+", async (payload, _) => {
     // Save data to session history
     await prisma.history.create({
         data: {
-            heartRate: body.heartreat,
+            heartRate: body.heartRate,
             spo2: body.spo2,
-            temprature: body.temprature,
+            temperature: body.temperature,
             session: {
                 connect: {
                     id: sessionId,
@@ -143,7 +143,7 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
                     sessionId: sessionId,
                 },
                 select: {
-                    temprature: true,
+                    temperature: true,
                     spo2: true,
                     heartRate: true,
                 },
@@ -153,8 +153,8 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
 
     const sessionLength = session.History.length;
 
-    const tempratureSum = session.History.reduce(
-        (a, b) => a + Number(b.temprature),
+    const temperatureSum = session.History.reduce(
+        (a, b) => a + Number(b.temperature),
         0
     );
     const spo2Sum = session.History.reduce((a, b) => a + Number(b.spo2), 0);
@@ -162,11 +162,11 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
         (a, b) => a + Number(b.heartRate),
         0
     );
-    const tempratureAverage = tempratureSum / sessionLength;
+    const temperatureAverage = temperatureSum / sessionLength;
     const spo2Average = spo2Sum / sessionLength;
     const heartRateAverage = heartRateSum / sessionLength;
 
-    const text = `⏳ Your health measurement session is over\n🧾 This is a summary of the measurement\n💓 Average Heart Rate: ${heartRateAverage}\n 🫧 Average SpO2: ${spo2Average}\n 🌡️ Average Body Temprature: ${tempratureAverage}\n\nOur displayed data is based on the average of ${sessionLength} measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
+    const text = `⏳ Your health measurement session is over\n🧾 This is a summary of the measurement\n💓 Average Heart Rate: ${heartRateAverage}\n 🫧 Average SpO2: ${spo2Average}\n 🌡️ Average Body Temperature: ${temperatureAverage}\n\nOur displayed data is based on the average of ${sessionLength} measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
 
     bot.editMessageText(text, {
         chat_id: device.user.user_chat_id,
@@ -180,9 +180,9 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
         },
         data: {
             active: false,
-            heartRate: String(tempratureAverage),
+            heartRate: String(temperatureAverage),
             spo2: String(spo2Average),
-            temprature: String(heartRateAverage),
+            temperature: String(heartRateAverage),
         },
     });
 

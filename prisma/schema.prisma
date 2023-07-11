@@ -37,7 +37,7 @@ model Session {
   id         String    @id @default(cuid())
   heartRate  String?
   spo2       String?
-  temprature String?
+  temperature String?
   active     Boolean
   device     Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   deviceId   String
@@ -48,9 +48,13 @@ model Session {
 
 model History {
   id         String    @id @default(cuid())
+  age        String?
+  sex        String?
+  mood       String?
+  sleepDur   String?
   heartRate  String?
   spo2       String?
-  temprature String?
+  temperature String?
   session    Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId  String
   createdAt  DateTime? @default(now())
