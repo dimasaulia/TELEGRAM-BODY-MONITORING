@@ -180,32 +180,35 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
     };
 
     // Make a POST request
-    axios
-        .post(process.env.AI_SERVER, data)
-        .then((response) => {
-            // Handle the response data
-            const text = `⏳ Your health measurement session is over\n🧾 This is a summary of the measurement\n💓 Average Heart Rate: ${heartRateAverage}\n 🫧 Average SpO2: ${spo2Average}\n 🌡️ Average Body Temperature: ${temperatureAverage}\n 💤 Sleep Time: ${session.sleepTime} hours\n 🍫 Mood: ${session.mood}\n 📈Stress Level: ${response.data.stressLevel}\n\nOur displayed data is based on the average of ${sessionLength} measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
+    const resp = await axios.post(`http://${process.env.AI_SERVER}/`, data);
+    const stressLevel = resp.data.stressLevel;
+    let description = "";
 
-            bot.editMessageText(text, {
-                chat_id: device.user.user_chat_id,
-                message_id: userMessageId,
-            });
-        })
-        .catch((error) => {
-            // Handle the error
-            console.error(error);
-        });
+    if (stressLevel == "2") {
+        description =
+            "Based on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy";
+    }
 
     // Jika tidak ada rule yang dilanggar
+    const text = `⏳ Your health measurement session is over\n🧾 This is a summary of the measurement\n💓 Average Heart Rate: ${heartRateAverage}\n 🫧 Average SpO2: ${spo2Average}\n 🌡️ Average Body Temperature: ${temperatureAverage}\n 💤 Sleep Time: ${session.sleepTime} hours\n 🍫 Mood: ${session.mood}\n 📈Stress Level: ${stressLevel}\n\nOur displayed data is based on the average of ${sessionLength} measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\n${description}`;
+
+    bot.editMessageText(text, {
+        chat_id: device.user.user_chat_id,
+        message_id: userMessageId,
+    });
+
+    // UPDATE SESSION DATA
     await prisma.session.update({
         where: {
             id: sessionId,
         },
         data: {
             active: false,
-            heartRate: String(temperatureAverage),
+            heartRate: String(heartRateAverage),
             spo2: String(spo2Average),
-            temperature: String(heartRateAverage),
+            temperature: String(temperatureAverage),
+            description: description,
+            stressLevel: String(stressLevel),
         },
     });
 

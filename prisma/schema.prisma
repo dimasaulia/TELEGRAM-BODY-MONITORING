@@ -40,6 +40,8 @@ model Session {
   heartRate   String?
   spo2        String?
   temperature String?
+  stressLevel String?
+  description String?
   sleepTime   Float?
   mood        MOOD?
   active      Boolean

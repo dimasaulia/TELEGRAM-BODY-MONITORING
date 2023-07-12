@@ -3,7 +3,7 @@ const { setUserActivity, getUserActivity } = require("../prisma/util");
 const { Keyboard } = require("../util/defaultInlineKeyboardLayout");
 const bot = require("./telegramClient");
 const mqttpublish = require("../mqttWrapper");
-const { days } = require("../util/timeFormater");
+const { days, times } = require("../util/timeFormater");
 
 bot.on("callback_query", async (query) => {
     console.log("---------------- ⬇NEW CALLBACK⬇ ----------------");
@@ -317,15 +317,17 @@ bot.on("callback_query", async (query) => {
             message_id: userMessageId,
         };
         const sessions = await prisma.session.findMany({
-            orderBy: { id: "asc" },
-            take: 5,
+            orderBy: { createdAt: "desc" },
+            take: 10,
         });
 
         const itemList = [];
         sessions.forEach((session) => {
             itemList.push([
                 {
-                    text: `${session.id}`,
+                    text: `${days(session.createdAt)} ${times(
+                        session.createdAt
+                    )}`,
                     callback_data: `SESSION_DETAIL#${session.id}`,
                 },
             ]);
@@ -354,10 +356,13 @@ bot.on("callback_query", async (query) => {
                 spo2: true,
                 heartRate: true,
                 temperature: true,
+                sleepTime: true,
+                description: true,
+                mood: true,
             },
         });
 
-        const text = `🧾 This is a summary of the measurement\n🆔 Session ID: ${data.id}\n\n💓 Average Heart Rate: ${data.heartRate}\n 🫧 Average SpO2: ${data.spo2}\n 🌡️ Average Body Temperature: ${data.temperature}\n\nOur displayed data is based on the average measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
+        const text = `🧾 This is a summary of the measurement\n🆔 Session ID: ${data.id}\n\n💓 Average Heart Rate: ${data.heartRate}\n 🫧 Average SpO2: ${data.spo2}\n 🌡️ Average Body Temperature: ${data.temperature}\n💤 Sleep Time: ${data.sleepTime} hours\n 🍫 Mood: ${data.mood}\n 📈Stress Level: ${data.stressLevel}\n\nOur displayed data is based on the average measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\n${data.description}`;
         let options = {
             chat_id: userChatId,
             message_id: userMessageId,
