@@ -1,8 +1,9 @@
 const prisma = require("../prisma/client");
-const { setUserActivity } = require("../prisma/util");
+const { setUserActivity, getUserActivity } = require("../prisma/util");
 const { Keyboard } = require("../util/defaultInlineKeyboardLayout");
 const bot = require("./telegramClient");
 const mqttpublish = require("../mqttWrapper");
+const { days } = require("../util/timeFormater");
 
 bot.on("callback_query", async (query) => {
     console.log("---------------- ⬇NEW CALLBACK⬇ ----------------");
@@ -12,6 +13,7 @@ bot.on("callback_query", async (query) => {
     const strUserChatId = String(query.message.chat.id);
     const userMessageId = query.message.message_id;
     const userActivity = query.data;
+    const userLastActivityRecordInDB = await getUserActivity(query);
 
     // CREATE PROFIL CALLBACK
     if (userActivity === "profilcreate") {
@@ -35,17 +37,75 @@ bot.on("callback_query", async (query) => {
             return;
         }
 
-        setUserActivity(query, "FINISH_CREATE_PROFIL");
+        setUserActivity(query, "CREATE_PROFIL_ASK_NAME");
         await prisma.user.create({
             data: {
                 user_chat_id: strUserChatId,
                 username: query.from?.username || `user-${userChatId}`,
-                first_name: query.from?.first_name,
-                last_name: query.from?.last_name,
             },
         });
         bot.editMessageText(
-            "Yeayy 😎, We are already save your data 📝\nNow you can enjoy all telegram bot feature.\nSimply press /start to start",
+            "Can you tell us what your name?\n\n*just type your name, ex: Andrea Sekarningtyas",
+            {
+                chat_id: userChatId,
+                message_id: userMessageId,
+            }
+        );
+        // bot.editMessageText(
+        //     "Yeayy 😎, We are already save your data 📝\nNow you can enjoy all telegram bot feature.\nSimply press /start to start",
+        //     {
+        //         chat_id: userChatId,
+        //         message_id: userMessageId,
+        //     }
+        // );
+    }
+
+    // CREATE PROFILE: INSERT SEX
+    if (userActivity == "SET-SEX-MALE") {
+        const data = await prisma.user.update({
+            where: {
+                user_chat_id: strUserChatId,
+            },
+            data: {
+                sex: "MALE",
+            },
+        });
+
+        setUserActivity(query, "FINISH_CREATE_PROFILE");
+        bot.editMessageText(
+            `Yeayy 😎, We are already save your data 📝\n\nThis is your profile detail\n\nName: ${
+                data.first_name
+            } ${data.last_name}\nUsername: ${data.username}\nSex: ${
+                data.sex
+            }\nBirth Date:${days(
+                data.birthDate
+            )}\n\nNow you can enjoy all telegram bot feature.\nSimply press /start to start\n`,
+            {
+                chat_id: userChatId,
+                message_id: userMessageId,
+            }
+        );
+    }
+
+    if (userActivity == "SET-SEX-FEMALE") {
+        const data = await prisma.user.update({
+            where: {
+                user_chat_id: strUserChatId,
+            },
+            data: {
+                sex: "FEMALE",
+            },
+        });
+
+        setUserActivity(query, "FINISH_CREATE_PROFILE");
+        bot.editMessageText(
+            `Yeayy 😎, We are already save your data 📝\n\nThis is your profile detail\n\nName: ${
+                data.first_name
+            } ${data.last_name}\nUsername: ${data.username}\nSex: ${
+                data.sex
+            }\nBirth Date:${days(
+                data.birthDate
+            )}\n\nNow you can enjoy all telegram bot feature.\nSimply press /start to start\n`,
             {
                 chat_id: userChatId,
                 message_id: userMessageId,
