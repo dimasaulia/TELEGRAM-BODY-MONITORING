@@ -36,18 +36,18 @@ model Device {
 }
 
 model Session {
-  id         String    @id @default(cuid())
-  heartRate  String?
-  spo2       String?
-  temprature String?
-  sleepTime  Float?
-  mood       MOOD?
-  active     Boolean
-  device     Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  deviceId   String
-  History    History[]
-  createdAt  DateTime? @default(now())
-  updatedAt  DateTime? @updatedAt
+  id          String    @id @default(cuid())
+  heartRate   String?
+  spo2        String?
+  temperature String?
+  sleepTime   Float?
+  mood        MOOD?
+  active      Boolean
+  device      Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  deviceId    String
+  History     History[]
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
 }
 
 model History {

@@ -1,6 +1,7 @@
 const { MqttServer } = require("./connection/mqttserver");
 const prisma = require("./prisma/client");
 const { setUserActivity } = require("./prisma/util");
+const axios = require("axios");
 const bot = require("./telegram/telegramClient");
 MqttServer.createConnection();
 
@@ -138,6 +139,9 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
             id: sessionId,
         },
         select: {
+            id: true,
+            sleepTime: true,
+            mood: true,
             History: {
                 where: {
                     sessionId: sessionId,
@@ -166,12 +170,31 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
     const spo2Average = spo2Sum / sessionLength;
     const heartRateAverage = heartRateSum / sessionLength;
 
-    const text = `⏳ Your health measurement session is over\n🧾 This is a summary of the measurement\n💓 Average Heart Rate: ${heartRateAverage}\n 🫧 Average SpO2: ${spo2Average}\n 🌡️ Average Body Temperature: ${temperatureAverage}\n\nOur displayed data is based on the average of ${sessionLength} measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
+    // KIRIM DATA KE AI SERVER
+    // Define the data to be sent in the request body
+    const data = {
+        temperature: parseFloat(temperatureAverage),
+        spo2: parseFloat(spo2Average),
+        sleepTime: parseFloat(session.sleepTime),
+        heartRate: parseFloat(heartRateAverage),
+    };
 
-    bot.editMessageText(text, {
-        chat_id: device.user.user_chat_id,
-        message_id: userMessageId,
-    });
+    // Make a POST request
+    axios
+        .post("http://127.0.0.1:8000/", data)
+        .then((response) => {
+            // Handle the response data
+            const text = `⏳ Your health measurement session is over\n🧾 This is a summary of the measurement\n💓 Average Heart Rate: ${heartRateAverage}\n 🫧 Average SpO2: ${spo2Average}\n 🌡️ Average Body Temperature: ${temperatureAverage}\n 💤 Sleep Time: ${session.sleepTime} hours\n 🍫 Mood: ${session.mood}\n 📈Stress Level: ${response.data.stressLevel}\n\nOur displayed data is based on the average of ${sessionLength} measurements taken at regular intervals. This helps to ensure accuracy and consistency in your readings, so you can be confident in the information you're receiving about your health metrics.\n\n 🖥️ System Diagnostics:\nBased on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy`;
+
+            bot.editMessageText(text, {
+                chat_id: device.user.user_chat_id,
+                message_id: userMessageId,
+            });
+        })
+        .catch((error) => {
+            // Handle the error
+            console.error(error);
+        });
 
     // Jika tidak ada rule yang dilanggar
     await prisma.session.update({

@@ -262,7 +262,7 @@ bot.on("callback_query", async (query) => {
     if (userActivity.startsWith("MOOD")) {
         const [activityName, activityQuestion, sessionId, userMessageId] =
             userLastActivityRecordInDB.split("#");
-        const [_, mood] = activityName.split("#");
+        const mood = userActivity.split("#")[1];
 
         let options = {
             chat_id: query.message.chat.id,
