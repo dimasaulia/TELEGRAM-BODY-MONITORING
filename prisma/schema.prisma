@@ -17,9 +17,11 @@ model UserActivity {
 }
 
 model User {
-  id           String  @id @default(uuid())
-  username     String  @unique
-  user_chat_id String  @unique
+  id           String    @id @default(uuid())
+  username     String    @unique
+  user_chat_id String    @unique
+  sex          SEX?
+  birthDate    DateTime?
   first_name   String?
   last_name    String?
   Device       Device?
@@ -38,6 +40,7 @@ model Session {
   heartRate  String?
   spo2       String?
   temprature String?
+  mood       MOOD?
   active     Boolean
   device     Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   deviceId   String
@@ -55,4 +58,14 @@ model History {
   sessionId  String
   createdAt  DateTime? @default(now())
   updatedAt  DateTime? @updatedAt
+}
+
+enum SEX {
+  MALE
+  FEMALE
+}
+
+enum MOOD {
+  GOOD
+  BAD
 }
