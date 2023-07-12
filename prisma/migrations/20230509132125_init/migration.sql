@@ -45,10 +45,6 @@ CREATE TABLE "Session" (
 -- CreateTable
 CREATE TABLE "History" (
     "id" TEXT NOT NULL,
-    "age" TEXT,
-    "sex" TEXT,
-    "mood" TEXT,
-    "sleepDur" TEXT,
     "heartRate" TEXT,
     "spo2" TEXT,
     "temperature" TEXT,

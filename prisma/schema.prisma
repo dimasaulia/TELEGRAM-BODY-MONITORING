@@ -48,10 +48,6 @@ model Session {
 
 model History {
   id         String    @id @default(cuid())
-  age        String?
-  sex        String?
-  mood       String?
-  sleepDur   String?
   heartRate  String?
   spo2       String?
   temperature String?
