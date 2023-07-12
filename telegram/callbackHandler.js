@@ -241,7 +241,65 @@ bot.on("callback_query", async (query) => {
                 },
             },
         });
-        setUserActivity(query, `START_SESSION#${session.id}#${userMessageId}`);
+        // setUserActivity(query, `START_SESSION#${session.id}#${userMessageId}`);
+        setUserActivity(
+            query,
+            `START_SESSION#ASK_SLEEP_TIME#${session.id}#${userMessageId}`
+        );
+        bot.editMessageText(
+            "The measurement session will start immediately, But before the measurement starts, can you tell us how long you sleep last night?",
+            options
+        );
+        // bot.editMessageText(
+        //     "The measurement session will start immediately, place your finger on the sensor for 2 minutes. The results of measurements taken by your device will appear below.",
+        //     options
+        // );
+
+        // Broadcast data ke MQTT agar segera memulai pengukuran
+        // mqttpublish(`/session/start/${user.Device.shortid}`, "BROADCAST#2");
+    }
+
+    if (userActivity.startsWith("MOOD")) {
+        const [activityName, activityQuestion, sessionId, userMessageId] =
+            userLastActivityRecordInDB.split("#");
+        const [_, mood] = activityName.split("#");
+
+        let options = {
+            chat_id: query.message.chat.id,
+            message_id: query.message.message_id,
+        };
+
+        // Ambil Data User Dari DB
+        const user = await prisma.user.findUnique({
+            where: {
+                user_chat_id: strUserChatId,
+            },
+            select: {
+                username: true,
+                first_name: true,
+                last_name: true,
+                Device: {
+                    select: {
+                        shortid: true,
+                    },
+                },
+            },
+        });
+
+        setUserActivity(
+            query,
+            `START_SESSION#${sessionId}#${query.message.message_id}`
+        );
+
+        await prisma.session.update({
+            where: {
+                id: sessionId,
+            },
+            data: {
+                mood,
+            },
+        });
+
         bot.editMessageText(
             "The measurement session will start immediately, place your finger on the sensor for 2 minutes. The results of measurements taken by your device will appear below.",
             options

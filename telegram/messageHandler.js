@@ -222,6 +222,49 @@ bot.on("message", async (data) => {
             options
         );
     }
+
+    // INFO: USER GIVE SLEEP TIME
+    if (userActivity.startsWith("START_SESSION#ASK_SLEEP_TIME")) {
+        const [activityName, activityQuestion, sessionId, userMessageId] =
+            userActivity.split("#");
+
+        setUserActivity(
+            data,
+            `START_SESSION#ASK_MOOD#${sessionId}#${userMessageId}`
+        );
+
+        await prisma.session.update({
+            where: {
+                id: sessionId,
+            },
+            data: {
+                sleepTime: parseFloat(userMessage),
+            },
+        });
+        const options = {
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        {
+                            text: "GOOD",
+                            callback_data: "MOOD#GOOD",
+                        },
+                    ],
+                    [
+                        {
+                            text: "BAD",
+                            callback_data: "MOOD#BAD",
+                        },
+                    ],
+                ],
+            },
+        };
+        bot.sendMessage(
+            userChatId,
+            "And now, can you tell us how you feel now?",
+            options
+        );
+    }
 });
 
 module.exports = bot;
