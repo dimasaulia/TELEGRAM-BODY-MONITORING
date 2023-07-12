@@ -358,6 +358,7 @@ bot.on("callback_query", async (query) => {
                 temperature: true,
                 sleepTime: true,
                 description: true,
+                stressLevel: true,
                 mood: true,
             },
         });
