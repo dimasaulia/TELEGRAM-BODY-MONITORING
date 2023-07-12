@@ -13,8 +13,8 @@
         "prisma": "^4.14.0"
     },
     "scripts": {
-        "dev": "nodemon app.js",
-        "start": "node app.js",
+        "dev": "nodemon stressMonitoring.js",
+        "start": "node stressMonitoring.js",
         "db:init": "yarn prisma init",
         "db:migrate": "yarn prisma migrate dev",
         "db:deploy": "yarn prisma migrate deploy",
