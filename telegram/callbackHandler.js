@@ -122,7 +122,11 @@ bot.on("callback_query", async (query) => {
             },
         });
         if (user) {
-            text = ` ⭐This Your Profile Detail⭐\nUsername:\t${user?.username}\nName:\t${user?.first_name} ${user?.last_name}\nSex:\t${user?.sex}\nBirth of Date:\t${user?.birthDate}\n`;
+            text = ` ⭐This Your Profile Detail⭐\nUsername:\t${
+                user?.username
+            }\nName:\t${user?.first_name} ${user?.last_name}\nSex:\t${
+                user?.sex
+            }\nBirth of Date:\t${days(user?.birthDate)}\n`;
         }
 
         if (!user) {
