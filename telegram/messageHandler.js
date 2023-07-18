@@ -113,7 +113,7 @@ bot.on("message", async (data) => {
         if (userData === null) {
             bot.sendMessage(
                 userChatId,
-                "We can find your data, please register first!!!"
+                "We can't find your data, please register first!!!"
             );
             return;
         }
@@ -143,7 +143,7 @@ bot.on("message", async (data) => {
         if (userData === null) {
             bot.sendMessage(
                 userChatId,
-                "We can find your data, please register first"
+                "We can't find your data, please register first"
             );
             return;
         }
@@ -185,7 +185,7 @@ bot.on("message", async (data) => {
         if (userData === null) {
             bot.sendMessage(
                 userChatId,
-                "We can find your data, please register first!!!"
+                "We can't find your data, please register first!!!"
             );
             return;
         }

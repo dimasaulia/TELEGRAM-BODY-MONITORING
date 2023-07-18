@@ -184,9 +184,29 @@ MqttServer.listener("/session/stop/+", async (payload, _) => {
     const stressLevel = resp.data.stressLevel;
     let description = "";
 
+    if (stressLevel == "0") {
+        description =
+            "Based on measurement data and analysis of our system, we diagnose you are in a good state and relaxed. Your vital signs are showing good results. Keep healthy and be happy!\n\n⚠️ This is not standardized medical advice. If you experience an abnormal reaction in your body, please visit the nearest hospital for further examination.";
+    }
+
+    if (stressLevel == "1") {
+        description =
+            "Based on measurement data and analysis of our system, we diagnose you are experiencing a slight stress. Maybe you feel a little bit dizzy or overwhelmed. Try to take a break for a while, do activities you like can make you more relaxed.\n\n⚠️ This is not standardized medical advice. If you experience an abnormal reaction in your body, please visit the nearest hospital for further examination.";
+    }
+
     if (stressLevel == "2") {
         description =
-            "Based on measurement data and analysis of our system. We diagnose you are experiencing excessive fatigue. Maybe your final project activities are too burdensome, try to take a break for a while, differentiating activities can make you more relaxed.*diagnostic data is dummy";
+            "Based on measurement data and analysis of our system, we diagnose you are experiencing excessive fatigue. Maybe your work is too burdensome for you. Try to take a break for a while, differentiating activities can make you more relaxed.\n\n⚠️ This is not standardized medical advice. If you experience an abnormal reaction in your body, please visit the nearest hospital for further examination.";
+    }
+
+    if (stressLevel == "3") {
+        description =
+            "Based on measurement data and analysis of our system, we diagnose you are experiencing anxiety and pessimism. Do not overthink things too much. Try to avoid something that makes you feel overwhelmed and moody. You can start by do something you regularly enjoy.\n\n⚠️ This is not standardized medical advice. If you experience an abnormal reaction in your body, please visit the nearest hospital for further examination.";
+    }
+
+    if (stressLevel == "4") {
+        description =
+            "Based on measurement data and analysis of our system, we diagnose you are experiencing burn-out and breakdown. You need to escape from this state because it can be worse. Try to reduce the stressor and do some exercises to make you healthy and your mind focused.\n\n⚠️ This is not standardized medical advice. If you experience an abnormal reaction in your body, please visit the nearest hospital for further examination.";
     }
 
     // Jika tidak ada rule yang dilanggar

@@ -122,14 +122,14 @@ bot.on("callback_query", async (query) => {
             },
         });
         if (user) {
-            text = ` ⭐This Your Profile Detail⭐\nUsername:\t${user?.username}\nName:\t${user?.first_name} ${user?.last_name}\n`;
+            text = ` ⭐This Your Profile Detail⭐\nUsername:\t${user?.username}\nName:\t${user?.first_name} ${user?.last_name}\nSex:\t${user?.sex}\nBirth of Date:\t${user?.birthDate}\n`;
         }
 
         if (!user) {
             text =
                 "Sorry, we don't recognize you. Are you new here? please fill up your profil first.";
         }
-        text += "\nQuick Access to bot menu";
+        text += "\n👇Quick access to the bot menu👇";
         bot.sendMessage(userChatId, text, Keyboard.defaultInlineKeyboard());
     }
 
@@ -247,7 +247,7 @@ bot.on("callback_query", async (query) => {
             `START_SESSION#ASK_SLEEP_TIME#${session.id}#${userMessageId}`
         );
         bot.editMessageText(
-            "The measurement session will start immediately, But before the measurement starts, can you tell us how long you sleep last night?",
+            "The measurement session will start immediately. Before the measurement starts, can you tell us how long you sleep last night? (please input with numbers only, example: 7)",
             options
         );
         // bot.editMessageText(
