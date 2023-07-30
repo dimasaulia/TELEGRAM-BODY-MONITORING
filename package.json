@@ -7,6 +7,8 @@
         "@prisma/client": "^4.14.0",
         "axios": "^1.4.0",
         "dotenv": "^16.0.3",
+        "moment": "^2.29.4",
+        "moment-timezone": "^0.5.43",
         "mqtt": "^4.3.7",
         "node-telegram-bot-api": "^0.61.0",
         "nodemon": "^2.0.22",

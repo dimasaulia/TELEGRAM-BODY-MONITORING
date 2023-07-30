@@ -3,7 +3,7 @@ const { setUserActivity, getUserActivity } = require("../prisma/util");
 const { Keyboard } = require("../util/defaultInlineKeyboardLayout");
 const bot = require("./telegramClient");
 const mqttpublish = require("../mqttWrapper");
-const { days, times } = require("../util/timeFormater");
+const { days, times, timeAdjusment } = require("../util/timeFormater");
 
 bot.on("callback_query", async (query) => {
     console.log("---------------- ⬇NEW CALLBACK⬇ ----------------");
@@ -327,11 +327,13 @@ bot.on("callback_query", async (query) => {
 
         const itemList = [];
         sessions.forEach((session) => {
+            const timeAdjusted = timeAdjusment(
+                session.createdAt,
+                "Asia/Jakarta"
+            );
             itemList.push([
                 {
-                    text: `${days(session.createdAt)} ${times(
-                        session.createdAt
-                    )}`,
+                    text: `${days(timeAdjusted)} ${times(timeAdjusted)}`,
                     callback_data: `SESSION_DETAIL#${session.id}`,
                 },
             ]);

@@ -1,3 +1,6 @@
+const moment = require("moment");
+require("moment-timezone");
+
 const days = (date) => {
     return new Intl.DateTimeFormat("id", {
         year: "numeric",
@@ -13,4 +16,20 @@ const times = (date) => {
     }).format(new Date(date));
 };
 
-module.exports = { days, times };
+const timeOffset = () => {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+};
+
+const timeAdjusment = (inputTime, targetTimeZone) => {
+    const SERVER_TIME_OFFSET = timeOffset();
+    let incomingDateTime = moment.tz(
+        inputTime,
+        "YYYY-MM-DD HH:mm",
+        SERVER_TIME_OFFSET
+    );
+    const gmtDate = incomingDateTime.clone().tz(targetTimeZone);
+    const formattedDate = gmtDate.format("YYYY-MM-DD HH:mm:ss");
+    return formattedDate;
+};
+
+module.exports = { days, times, timeOffset, timeAdjusment };
